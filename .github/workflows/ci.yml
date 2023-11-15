@@ -43,6 +43,9 @@ jobs:
         name: Install pnpm
         with:
           version: 8
+      - name: Install deps
+        run: |
+          pnpm i
       - name: Tag release
         id: tag_release
         env:
