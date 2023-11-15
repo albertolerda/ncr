@@ -8,11 +8,9 @@ permissions:
   contents: read # for checkout
 
 jobs:
-  release:
+  build:
     name: Release
     runs-on: ubuntu-latest
-    permissions:
-      contents: write # to be able to publish a GitHub release
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -27,7 +25,16 @@ jobs:
         with:
           version: 8
       - name: Build executable
-        run: make build
+        run: |
+          make build
+          chmod +x ncr
+
+  semantic-release:
+    permissions:
+      contents: write # to be able to publish a GitHub release
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
       - name: Tag release
         id: tag_release
         env:
@@ -43,6 +50,31 @@ jobs:
       - name: Upload artifact for ncr
         uses: actions/upload-artifact@v3
         with:
-          name: release-ncr
+          name: ncr
+          path: |
+            ./ncr
+
+  draft-release:
+    name: Pack release
+    needs: semantic-release
+    runs-on: ubuntu-latest
+    steps:
+      - name: download binary artifacts
+        uses: actions/download-artifact@v3
+        with:
           path: |
             ncr
+      - name: show directory structure
+        run: tree -dL 3
+      - name: relase all binary artifacts
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            ncr
+          tag_name: ${{ needs.semantic-release.outputs.version }}
+          body_path: README.md
+          append_body: true
+          draft: false
+          prerelease: false
+          fail_on_unmatched_files: true
+          generate_release_notes: true
