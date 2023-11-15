@@ -60,7 +60,7 @@ jobs:
             awk '/Published release/ { printf("version=v%s\n",$8) }' semantic-release.log >> $GITHUB_OUTPUT
           fi
           echo "Result"
-          echo $GITHUB_OUTPUT
+          cat $GITHUB_OUTPUT
       - name: Upload artifact for ncr
         uses: actions/upload-artifact@v3
         with:
