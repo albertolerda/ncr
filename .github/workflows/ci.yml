@@ -33,7 +33,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          npx semantic-release | tee semantic-release.log
+          npx semantic-release >semantic-release.log
           if [[ `git tag --points-at HEAD` == "" ]]; then
             echo "release=False" >> $GITHUB_OUTPUT
           else
