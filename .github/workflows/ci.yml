@@ -1,0 +1,48 @@
+name: Release
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read # for checkout
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # to be able to publish a GitHub release
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "lts/*"
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
+        with:
+          version: 8
+      - name: Build executable
+        run: make build
+      - name: Tag release
+        id: tag_release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npx semantic-release | tee semantic-release.log
+          if [[ `git tag --points-at HEAD` == "" ]]; then
+            echo "release=False" >> $GITHUB_OUTPUT
+          else
+            echo "release=True" >> $GITHUB_OUTPUT
+            awk '/Published release/ { printf("version=v%s\n",$8) }' semantic-release.log >> $GITHUB_OUTPUT
+          fi
+      - name: Upload artifact for ncr
+        uses: actions/upload-artifact@v3
+        with:
+          name: release-ncr
+          path: |
+            ncr
