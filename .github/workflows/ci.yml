@@ -27,6 +27,12 @@ jobs:
         run: |
           make build
           chmod +x ncr
+      - name: Upload artifact for ncr
+        uses: actions/upload-artifact@v3
+        with:
+          name: ncr
+          path: |
+            ncr
 
   semantic-release:
     permissions:
@@ -64,12 +70,6 @@ jobs:
           fi
           echo "Result"
           cat $GITHUB_OUTPUT
-      - name: Upload artifact for ncr
-        uses: actions/upload-artifact@v3
-        with:
-          name: ncr
-          path: |
-            ncr
 
   draft-release:
     needs: semantic-release
