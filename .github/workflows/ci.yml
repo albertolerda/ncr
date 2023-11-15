@@ -9,7 +9,6 @@ permissions:
 
 jobs:
   build:
-    name: Release
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -35,6 +34,15 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
+        with:
+          version: 8
       - name: Tag release
         id: tag_release
         env:
@@ -55,7 +63,6 @@ jobs:
             ./ncr
 
   draft-release:
-    name: Pack release
     needs: semantic-release
     runs-on: ubuntu-latest
     steps:
