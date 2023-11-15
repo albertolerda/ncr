@@ -72,6 +72,8 @@ jobs:
           cat $GITHUB_OUTPUT
 
   draft-release:
+    permissions:
+      contents: write
     needs: semantic-release
     runs-on: ubuntu-latest
     steps:
