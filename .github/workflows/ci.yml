@@ -86,7 +86,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            ncr-release/ncr
+            ncr-release/ncr/*
           append_body: true
           draft: false
           prerelease: false
