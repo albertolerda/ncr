@@ -33,6 +33,12 @@ jobs:
           name: ncr
           path: |
             ncr
+      - name: Upload artifact for README
+        uses: actions/upload-artifact@v3
+        with:
+          name: readme
+          path: |
+            README.md
 
   semantic-release:
     permissions:
@@ -90,6 +96,7 @@ jobs:
           files: |
             ncr-release/ncr/*
           append_body: true
+          body_path: ncr-release/readme/README.md
           draft: false
           prerelease: false
           fail_on_unmatched_files: true
